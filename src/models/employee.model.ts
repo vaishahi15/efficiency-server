@@ -1,10 +1,13 @@
 import { DataTypes, Model } from "sequelize";
 import { sequelize } from "../util/database.util";
+import { Organization } from "./organization.model";
+import { Division } from "./division.model";
 
-interface OperatorAttributes {
+interface EmployeeAttributes {
     id: number;
-    operatorId: number;
+    employeeId: number;
     name: string;
+    role: string;
     password: string;
     divisionId: number;
     organizationId: number;
@@ -12,10 +15,11 @@ interface OperatorAttributes {
     token: string;
 }
 
-export class Operator extends Model<OperatorAttributes> implements OperatorAttributes {
+export class Employee extends Model<EmployeeAttributes> implements EmployeeAttributes {
     declare id: number;
-    declare operatorId: number;
+    declare employeeId: number;
     declare name: string;
+    declare role: string;
     declare password: string;
     declare divisionId: number;
     declare organizationId: number;
@@ -23,14 +27,14 @@ export class Operator extends Model<OperatorAttributes> implements OperatorAttri
     declare token: string;
 }
 
-Operator.init({
+Employee.init({
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         allowNull: false,
         primaryKey: true
     },
-    operatorId: {
+    employeeId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         unique: true
@@ -39,28 +43,29 @@ Operator.init({
         type: DataTypes.STRING(100),
         allowNull: false
     },
+    role: {
+        type: DataTypes.STRING(100),
+        allowNull: true
+    },
     password: {
         type: DataTypes.STRING(100),
-        allowNull: false
+        allowNull: true
     },
     divisionId: {
         type: DataTypes.INTEGER,
+        allowNull: true,
         references: {
             model: 'Divisions',
             key: 'id',
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'SET NULL'
+        }
     },
     organizationId: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
         references: {
             model: 'Organizations',
-            key: 'orgId',
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'RESTRICT',
+            key: 'id',
+        }
     },
     status: {
         type: DataTypes.STRING(20),
@@ -72,5 +77,11 @@ Operator.init({
     }
 }, {
     sequelize,
-    modelName: 'Operators'
+    modelName: 'Employees'
 })
+
+Employee.belongsTo(Organization, { foreignKey: 'organizationId', as: 'organization' });
+Organization.hasMany(Employee, { foreignKey: 'organizationId', as: 'employees' });
+
+Employee.belongsTo(Division, { foreignKey: 'divisionId', as: 'division' });
+Division.hasMany(Employee, { foreignKey: 'divisionId', as: 'employees' });

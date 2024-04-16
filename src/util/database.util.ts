@@ -8,5 +8,8 @@ export const sequelize = new Sequelize(process.env.DB_NAME || 'operator_efficien
     dialect: 'mysql',
     host: process.env.DB_HOST,
     port: 3306,
-    logging: false
+    logging: false,
+    dialectOptions: {
+        connectTimeout: 20000,
+    }
 })

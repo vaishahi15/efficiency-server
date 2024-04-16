@@ -1,8 +1,8 @@
-import { Cell } from '@sql-models';
+import { Cell, Division } from '@sql-models';
 
 export const get = async (req, res) => {
     try {
-        const cells = await Cell.findAll();
+        const cells = await Cell.findAll({});
         res.status(200).send(cells);
     } catch (error) {
         console.log(error);
@@ -34,12 +34,13 @@ export const updateCell = async (req, res) => {
 
 export const deleteCell = async (req, res) => {
     const { id } = req.params;
+    console.log(id)
     try {
         const deletedCell = await Cell.destroy({ where: { id } });
         if (deletedCell) {
             res.status(200).send({ id });
         } else {
-            res.status(200).send({ message: 'Cell not found' });
+            throw new Error('Cell not found.');
         }
     } catch (error) {
         console.log(error);

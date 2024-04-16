@@ -1,8 +1,8 @@
-import { Division } from '@sql-models';
+import { Division, Employee } from '@sql-models';
 
 export const get = async (req, res) => {
     try {
-        const divisions = await Division.findAll();
+        const divisions = await Division.findAll({});
         res.status(200).send(divisions);
     } catch (error) {
         console.log(error);
@@ -39,7 +39,22 @@ export const deleteDivision = async (req, res) => {
         if (deletedDivision) {
             res.status(200).send({ id });
         } else {
-            res.status(200).send({ message: 'Division not found' });
+            throw new Error('Division not found.');
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({ messgae: 'network error' });
+    }
+}
+
+export const getDivisionById = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const division = await Division.findByPk(id);
+        if (division) {
+            res.status(200).send(division);
+        } else {
+            throw new Error('Division not found.');
         }
     } catch (error) {
         console.log(error);

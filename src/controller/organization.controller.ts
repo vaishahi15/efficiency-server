@@ -39,7 +39,7 @@ export const deleteOrganization = async (req, res) => {
         if (deletedOrganization) {
             res.status(200).send({ id });
         } else {
-            res.status(200).send({ message: 'Organization not found' });
+            throw new Error('Organization not found.');
         }
     } catch (error) {
         console.log(error);

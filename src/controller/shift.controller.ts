@@ -39,7 +39,7 @@ export const deleteShift = async (req, res) => {
         if (deletedShift) {
             res.status(200).send({ id });
         } else {
-            res.status(200).send({ message: 'Shift not found' });
+            throw new Error('Shift not found.');
         }
     } catch (error) {
         console.log(error);

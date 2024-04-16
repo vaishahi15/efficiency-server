@@ -7,8 +7,9 @@ import debug from 'debug';
 const debugNode = debug("node-angular");
 
 import { sequelize } from '../src/util/database.util';
-import { socket } from './helpers';
-
+import { createAdminUser, createOrganization, socket } from '@helpers';
+import { initTriggerListener } from './util/init-trigger-listener';
+import { removeTable } from 'util/remove-table';
 
 const normalizePort = val => {
     var port = parseInt(val, 10);
@@ -75,11 +76,15 @@ const listenServer = async () => {
     }
 }
 
-(async function() {
+(async function () {
     try {
         await listenServer();
         await sequelize.authenticate();
         await sequelize.sync();
+        //await removeTable();
+        await createOrganization();
+        await createAdminUser();
+        await initTriggerListener();
         console.log('Database connected successfully.');
     } catch (error) {
         console.error('Unable to connect to the database:', error);

@@ -1,8 +1,22 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Model } from 'sequelize';
 import { sequelize } from '../util/database.util';
 import { Division } from './division.model';
 
-export const Cell = sequelize.define('Cells', {
+interface CellAttributes {
+    id: number;
+    name: string;
+    type: 'auto' | 'manual';
+    divisionId: number;
+}
+
+export class Cell extends Model<CellAttributes> implements CellAttributes {
+    declare id: number;
+    declare name: string;
+    declare type: 'auto' | 'manual';
+    declare divisionId: number;
+}
+
+Cell.init({
     id: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -13,9 +27,12 @@ export const Cell = sequelize.define('Cells', {
         type: DataTypes.STRING(100),
         allowNull: false,
     },
-    divisionId: { 
+    type: {
+        type: DataTypes.ENUM('auto', 'manual'),
+        allowNull: false
+    },
+    divisionId: {
         type: DataTypes.INTEGER,
-        allowNull: false,
         references: {
             model: 'Divisions', // name of the target model
             key: 'id', // key in the target model that we're referencing
@@ -23,11 +40,17 @@ export const Cell = sequelize.define('Cells', {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
     }
+}, {
+    sequelize,
+    modelName: 'Cells'
 })
+
+Cell.belongsTo(Division, {
+    foreignKey: 'divisionId',
+    as: 'division' // Alias added here
+});
 
 Division.hasMany(Cell, {
     foreignKey: 'divisionId',
-});
-Cell.belongsTo(Division, {
-    foreignKey: 'divisionId',
+    as: 'division' // Alias added here
 });

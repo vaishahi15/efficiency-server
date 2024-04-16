@@ -32,8 +32,7 @@
     "paths": {
       "@models": ["ts-models"],
       "@sql-models": ["models"],
-      "@helpers/*": ["helpers/*"],
-      "@helpers/core": ["helpers"],
+      "@helpers": ["helpers"],
       "@controller/*": ["controller/*"],
       "@routes": ["routes"],
     },                                      /* Specify a set of entries that re-map imports to additional lookup locations. */

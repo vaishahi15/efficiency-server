@@ -1,7 +1,8 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../util/database.util";
+import { Organization } from "./organization.model";
 
-export const Product = sequelize.define('Products', {
+export const Model = sequelize.define('Models', {
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
@@ -24,9 +25,12 @@ export const Product = sequelize.define('Products', {
         allowNull: false,
         references: {
             model: 'Organizations',
-            key: 'orgId',
+            key: 'id',
         },
         onUpdate: 'CASCADE',
         onDelete: 'RESTRICT',
     }
 })
+
+Model.belongsTo(Organization, { foreignKey: 'organizationId', as: 'organization' });
+Organization.hasMany(Model, { foreignKey: 'organizationId', as: 'models' });

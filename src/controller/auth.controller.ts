@@ -1,19 +1,19 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { Operator } from '@sql-models';
+import { Employee } from '@sql-models';
 
 export const login = async (req, res) => {
 
-    const { name, password } = req.body;
+    const { username: name, password } = req.body;
 
     try {
-        const user = await Operator.findOne({ where: { name }, attributes: ['id', 'name', 'password', 'status'] });
+        const user = await Employee.findOne({ where: { name }, attributes: ['id', 'name', 'password', 'status', 'role'] });
 
         if (!user) {
             throw new Error('Email or Password is wrong.');
         }
 
-        if (user.status) {
+        if (user.status !== 'active') {
             throw new Error('User Inactive.');
         }
 
@@ -25,13 +25,14 @@ export const login = async (req, res) => {
 
         const token = jwt.sign({ id: user.id }, 'acceedo12345');
 
-        await Operator.update({ token }, { where: { id: user.id } });
+        await Employee.update({ token }, { where: { id: user.id } });
 
         res.status(200).send({
             user: {
                 id: user.id,
                 name: user.name,
-                status: user.status
+                status: user.status,
+                role: user.role
             }, token
         });
     } catch (err) {
@@ -46,7 +47,7 @@ export const logout = async (req, res) => {
     const { id } = req.body;
 
     try {
-        await Operator.update({ token: null }, { where: { id } });
+        await Employee.update({ token: null }, { where: { id } });
         res.status(200).send({ message: 'success' });
     } catch (err) {
         res.status(500).send({ message: 'error' });
@@ -57,7 +58,7 @@ export const verifyUser = async (req, res) => {
 
     try {
         const { token } = req.body;
-        const user = await Operator.findOne({ where: { token } });
+        const user = await Employee.findOne({ where: { token } });
         if (!user) {
             throw new Error('No user found.');
         }

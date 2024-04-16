@@ -1,9 +1,11 @@
 import { Router } from 'express';
-import { get, add, deleteDivision, updateDivision } from '@controller/division.controller';
+import { get, add, deleteDivision, updateDivision, getDivisionById } from '@controller/division.controller';
 
 const router = Router();
 
 router.get('/division', get);
+
+router.get('/division/:id', getDivisionById);
 
 router.post('/division', add);
 
